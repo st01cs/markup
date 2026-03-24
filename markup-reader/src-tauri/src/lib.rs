@@ -1,4 +1,8 @@
-use tauri::Emitter;
+use tauri::{AppHandle, Emitter, Manager};
+
+struct AppState {
+    pending_file: std::sync::Mutex<Option<String>>,
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -7,6 +11,9 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_deep_link::init())
+        .manage(AppState {
+            pending_file: std::sync::Mutex::new(None),
+        })
         .setup(|app| {
             #[cfg(desktop)]
             {
@@ -17,18 +24,32 @@ pub fn run() {
                 app.deep_link().on_open_url(move |event| {
                     for url in event.urls() {
                         let url_str = url.to_string();
-                        // Handle file:// URLs from macOS file association
                         if let Some(path) = url_str.strip_prefix("file://") {
                             let path = path.replace("%20", " ");
-                            // Window might not be ready yet — emit to the app handle
-                            // Frontend will listen on app handle for the event
-                            let _ = app_handle.emit("open-file", path);
+                            // Try emit first (works if frontend is already listening)
+                            let _ = app_handle.emit("open-file", &path);
+                            // Also store in state as fallback (for cold start)
+                            if let Some(state) = app_handle.try_state::<AppState>() {
+                                let mut pending = state.pending_file.lock().unwrap();
+                                *pending = Some(path);
+                            }
                         }
                     }
                 });
             }
             Ok(())
         })
+        .invoke_handler(tauri::generate_handler![get_pending_file])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+#[tauri::command]
+fn get_pending_file(app: AppHandle) -> Option<String> {
+    if let Some(state) = app.try_state::<AppState>() {
+        let mut pending = state.pending_file.lock().unwrap();
+        pending.take()
+    } else {
+        None
+    }
 }

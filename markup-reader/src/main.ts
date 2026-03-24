@@ -3,6 +3,7 @@ import { renderMarkdown } from './lib/renderer.js';
 import { applyTheme, detectColorScheme, getCurrentTheme, toggleTheme as toggleThemeFn } from './lib/theme.js';
 import { readTextFileSafe, isFileTooLarge, formatFileSize, type FileError } from './lib/file-utils.js';
 import { listen } from '@tauri-apps/api/event';
+import { invoke } from '@tauri-apps/api/core';
 
 const contentEl = document.getElementById('markdown-content')!;
 const welcomeEl = document.getElementById('welcome')!;
@@ -174,3 +175,12 @@ listen<string>('open-file', async (event) => {
   const filePath = event.payload;
   await loadFile(filePath);
 });
+
+// Check if app was launched with a file argument (cold start file association)
+async function checkPendingFile() {
+  const pending = await invoke<string | null>('get_pending_file');
+  if (pending) {
+    await loadFile(pending);
+  }
+}
+checkPendingFile();
