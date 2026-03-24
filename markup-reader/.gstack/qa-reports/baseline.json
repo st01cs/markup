@@ -1,0 +1,24 @@
+{
+  "date": "2026-03-24",
+  "url": "http://localhost:1420",
+  "healthScore": 97,
+  "issues": [
+    {
+      "id": "QA-001",
+      "title": "File dialog unavailable in headless environment",
+      "severity": "informational",
+      "category": "functional",
+      "status": "deferred"
+    }
+  ],
+  "categoryScores": {
+    "console": 100,
+    "links": 100,
+    "visual": 100,
+    "functional": 90,
+    "ux": 100,
+    "performance": 100,
+    "content": 100,
+    "accessibility": 100
+  }
+}
