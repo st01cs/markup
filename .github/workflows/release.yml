@@ -35,8 +35,9 @@ jobs:
 
       - name: Clean old builds
         run: |
-          rm -rf markup-reader/src-tauri/target/release/bundle
-          rm -rf markup-reader/src-tauri/target/release/.fingerprint
+          if [ -d "markup-reader/src-tauri/target/release/bundle" ]; then rm -rf markup-reader/src-tauri/target/release/bundle; fi
+          if [ -d "markup-reader/src-tauri/target/release/.fingerprint" ]; then rm -rf markup-reader/src-tauri/target/release/.fingerprint; fi
+        shell: bash
 
       - name: Install frontend dependencies
         run: npm ci
