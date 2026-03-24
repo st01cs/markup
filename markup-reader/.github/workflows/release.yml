@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            platform: macos
+            target: aarch64-apple-darwin
+          - os: windows-latest
+            platform: windows
+            target: x86_64-pc-windows-msvc
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: markup-reader/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: markup-reader
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          target: ${{ matrix.target }}
+
+      - name: Build Tauri app
+        run: npm run tauri build -- --ci
+        working-directory: markup-reader
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+
+      - name: Find artifact
+        id: artifact
+        shell: bash
+        run: |
+          if [ "${{ matrix.platform }}" = "macos" ]; then
+            ARTIFACT=$(find markup-reader/src-tauri/target/release/bundle/dmg -name '*.dmg' | head -1)
+          else
+            ARTIFACT=$(find markup-reader/src-tauri/target/release/bundle/nsis -name '*.exe' | head -1)
+          fi
+          echo "path=$ARTIFACT" >> $GITHUB_OUTPUT
+          echo "name=$(basename $ARTIFACT)" >> $GITHUB_OUTPUT
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Markup Reader ${{ github.ref_name }}
+          files: ${{ steps.artifact.outputs.path }}
+          prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
