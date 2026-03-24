@@ -27,22 +27,6 @@
       "csp": null
     }
   },
-  "plugins": {
-    "cli": {
-      "description": "Markup Reader CLI",
-      "args": [
-        {
-          "name": "file",
-          "index": 1,
-          "takesValue": true,
-          "multiple": false,
-          "short": "f",
-          "long": "file",
-          "description": "Open a Markdown file"
-        }
-      ]
-    }
-  },
   "bundle": {
     "active": true,
     "targets": ["dmg", "nsis"],
