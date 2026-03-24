@@ -172,15 +172,27 @@ if (initialDark) {
 
 // Listen for file open events from macOS file association
 listen<string>('open-file', async (event) => {
+  console.log('[DEBUG] open-file event received:', event.payload);
   const filePath = event.payload;
   await loadFile(filePath);
 });
 
 // Check if app was launched with a file argument (cold start file association)
-async function checkPendingFile() {
-  const pending = await invoke<string | null>('get_pending_file');
-  if (pending) {
-    await loadFile(pending);
+// Poll for pending file since on_open_url may fire after initial check on cold start
+async function checkPendingFile(retries = 20) {
+  console.log('[DEBUG] checkPendingFile: starting');
+  for (let i = 0; i < retries; i++) {
+    const pending = await invoke<string | null>('get_pending_file');
+    console.log(`[DEBUG] checkPendingFile attempt ${i + 1}:`, pending);
+    if (pending) {
+      console.log('[DEBUG] checkPendingFile: loading file:', pending);
+      await loadFile(pending);
+      return;
+    }
+    await new Promise(resolve => setTimeout(resolve, 50));
   }
+  console.log('[DEBUG] checkPendingFile: no pending file found after retries');
 }
+
+// Start polling for pending file (will exit early if already set)
 checkPendingFile();

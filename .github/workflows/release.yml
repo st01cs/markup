@@ -33,14 +33,38 @@ jobs:
           cache: 'npm'
           cache-dependency-path: markup-reader/package-lock.json
 
+      - name: Clean old builds
+        run: |
+          rm -rf markup-reader/src-tauri/target/release/bundle
+          rm -rf markup-reader/src-tauri/target/release/.fingerprint
+
       - name: Install frontend dependencies
         run: npm ci
         working-directory: markup-reader
+
+      - name: Set version from tag
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "Setting version to $VERSION"
+          cd markup-reader
+          # Update tauri.conf.json version
+          node -e "
+            const fs = require('fs');
+            const conf = JSON.parse(fs.readFileSync('src-tauri/tauri.conf.json', 'utf8'));
+            conf.version = '$VERSION';
+            fs.writeFileSync('src-tauri/tauri.conf.json', JSON.stringify(conf, null, 2));
+            console.log('Updated version to', conf.version);
+          "
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           target: ${{ matrix.target }}
+
+      - name: Disable Rust caching
+        run: echo "CARGO_NET_OFFLINE=true" >> $GITHUB_ENV
 
       - name: Build Tauri app
         run: npm run tauri build -- --ci

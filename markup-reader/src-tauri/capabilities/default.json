@@ -8,6 +8,7 @@
     "opener:default",
     "dialog:default",
     "fs:default",
+    "deep-link:default",
     {
       "identifier": "fs:allow-read-text-file",
       "allow": [{ "path": "**" }]
