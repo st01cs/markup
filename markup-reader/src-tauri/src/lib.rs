@@ -1,3 +1,6 @@
+use tauri::Emitter;
+use tauri::Manager;
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -9,13 +12,13 @@ pub fn run() {
             #[cfg(desktop)]
             {
                 use tauri_plugin_deep_link::DeepLinkExt;
+                let app_handle = app.handle().clone();
                 app.deep_link().on_open_url(move |event| {
                     for url in event.urls() {
-                        // Convert file:// URL to path and emit to frontend
                         if let Some(path) = url.to_string().strip_prefix("file://") {
-                            let path = path.replace("%20", " "); // handle spaces in path
-                            if let Some(window) = app.get_webview_window("main") {
-                                let _ = window.emit("open-file", path);
+                            let path = path.replace("%20", " ");
+                            if let Some(window) = app_handle.get_webview_window("main") {
+                                let _: Result<(), _> = window.emit("open-file", path);
                             }
                         }
                     }
