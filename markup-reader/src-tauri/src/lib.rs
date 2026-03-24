@@ -1,5 +1,4 @@
 use tauri::Emitter;
-use tauri::Manager;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -13,13 +12,17 @@ pub fn run() {
             {
                 use tauri_plugin_deep_link::DeepLinkExt;
                 let app_handle = app.handle().clone();
+
+                // Register deep-link handler
                 app.deep_link().on_open_url(move |event| {
                     for url in event.urls() {
-                        if let Some(path) = url.to_string().strip_prefix("file://") {
+                        let url_str = url.to_string();
+                        // Handle file:// URLs from macOS file association
+                        if let Some(path) = url_str.strip_prefix("file://") {
                             let path = path.replace("%20", " ");
-                            if let Some(window) = app_handle.get_webview_window("main") {
-                                let _: Result<(), _> = window.emit("open-file", path);
-                            }
+                            // Window might not be ready yet — emit to the app handle
+                            // Frontend will listen on app handle for the event
+                            let _ = app_handle.emit("open-file", path);
                         }
                     }
                 });
