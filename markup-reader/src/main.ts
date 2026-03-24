@@ -2,6 +2,7 @@ import { open } from '@tauri-apps/plugin-dialog';
 import { renderMarkdown } from './lib/renderer.js';
 import { applyTheme, detectColorScheme, getCurrentTheme, toggleTheme as toggleThemeFn } from './lib/theme.js';
 import { readTextFileSafe, isFileTooLarge, formatFileSize, type FileError } from './lib/file-utils.js';
+import { listen } from '@tauri-apps/api/event';
 
 const contentEl = document.getElementById('markdown-content')!;
 const welcomeEl = document.getElementById('welcome')!;
@@ -167,3 +168,9 @@ if (initialDark) {
   fabIconDark.style.display = 'none';
   fabIconLight.style.display = '';
 }
+
+// Listen for file open events from macOS file association
+listen<string>('open-file', async (event) => {
+  const filePath = event.payload;
+  await loadFile(filePath);
+});

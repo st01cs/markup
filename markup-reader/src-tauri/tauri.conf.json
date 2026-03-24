@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Markup Reader",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "identifier": "com.jbi.markup-reader",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -40,8 +40,40 @@
     "category": "public.app-category.productivity",
     "shortDescription": "Elegant Markdown Reader",
     "longDescription": "A beautiful, fast Markdown reader built with Tauri. Features GitHub-flavored Markdown support, syntax highlighting, dark mode, and HTML embedding.",
+    "fileAssociations": [
+      {
+        "ext": ["md", "markdown"],
+        "name": "Markdown Document",
+        "description": "Markdown file",
+        "mimeType": "text/markdown",
+        "role": "Viewer"
+      },
+      {
+        "ext": ["txt"],
+        "name": "Plain Text",
+        "description": "Plain text file",
+        "mimeType": "text/plain",
+        "role": "Viewer"
+      }
+    ],
     "macOS": {
-      "minimumSystemVersion": "10.15"
+      "minimumSystemVersion": "10.15",
+      "fileAssociations": [
+        {
+          "ext": ["md", "markdown"],
+          "name": "Markdown Document",
+          "description": "Markdown file",
+          "mimeType": "text/markdown",
+          "role": "Viewer"
+        },
+        {
+          "ext": ["txt"],
+          "name": "Plain Text",
+          "description": "Plain text file",
+          "mimeType": "text/plain",
+          "role": "Viewer"
+        }
+      ]
     },
     "windows": {
       "nsis": {
