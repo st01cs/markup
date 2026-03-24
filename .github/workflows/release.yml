@@ -63,9 +63,6 @@ jobs:
         with:
           target: ${{ matrix.target }}
 
-      - name: Disable Rust caching
-        run: echo "CARGO_NET_OFFLINE=true" >> $GITHUB_ENV
-
       - name: Build Tauri app
         run: npm run tauri build -- --ci
         working-directory: markup-reader
