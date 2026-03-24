@@ -5,6 +5,7 @@ use std::path::PathBuf;
 
 struct AppState {
     pending_file: std::sync::Mutex<Option<String>>,
+    current_file: std::sync::Mutex<Option<String>>,
 }
 
 fn log_debug(msg: &str) {
@@ -74,6 +75,7 @@ pub fn run() {
         .plugin(tauri_plugin_deep_link::init())
         .manage(AppState {
             pending_file: std::sync::Mutex::new(cli_file_path.clone()),
+            current_file: std::sync::Mutex::new(None),
         })
         .setup(|app| {
             log_debug("[DEBUG] setup() called");
@@ -110,8 +112,25 @@ pub fn run() {
                         if let Some(path) = url_str.strip_prefix("file://") {
                             let path = path.replace("%20", " ");
                             log_debug(&format!("[DEBUG] file path: {}", path));
-                            // Try emit first (works if frontend is already listening)
-                            let _ = app_handle.emit("open-file", &path);
+
+                            // Check if this file is already open
+                            let is_already_open = app_handle.try_state::<AppState>()
+                                .map(|state| {
+                                    let current = state.current_file.lock().unwrap();
+                                    *current == Some(path.clone())
+                                })
+                                .unwrap_or(false);
+
+                            if is_already_open {
+                                // File is already open, emit focus event
+                                log_debug(&format!("[DEBUG] file already open, focusing window: {}", path));
+                                let _ = app_handle.emit("focus-window", &path);
+                            } else {
+                                // New file, emit open event
+                                log_debug(&format!("[DEBUG] new file, opening: {}", path));
+                                let _ = app_handle.emit("open-file", &path);
+                            }
+
                             // Also store in state as fallback (for cold start)
                             if let Some(state) = app_handle.try_state::<AppState>() {
                                 let mut pending = state.pending_file.lock().unwrap();
@@ -131,7 +150,7 @@ pub fn run() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![get_pending_file])
+        .invoke_handler(tauri::generate_handler![get_pending_file, set_current_file, clear_current_file])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -143,5 +162,23 @@ fn get_pending_file(app: AppHandle) -> Option<String> {
         pending.take()
     } else {
         None
+    }
+}
+
+#[tauri::command]
+fn set_current_file(app: AppHandle, file_path: String) {
+    if let Some(state) = app.try_state::<AppState>() {
+        let mut current = state.current_file.lock().unwrap();
+        *current = Some(file_path);
+        log_debug(&format!("[DEBUG] set_current_file: {:?}", current));
+    }
+}
+
+#[tauri::command]
+fn clear_current_file(app: AppHandle) {
+    if let Some(state) = app.try_state::<AppState>() {
+        let mut current = state.current_file.lock().unwrap();
+        *current = None;
+        log_debug("[DEBUG] clear_current_file");
     }
 }

@@ -6,6 +6,8 @@ import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 
+const appWindow = getCurrentWindow();
+
 const contentEl = document.getElementById('markdown-content')!;
 const welcomeEl = document.getElementById('welcome')!;
 const fileInfoEl = document.getElementById('file-info')!;
@@ -89,8 +91,10 @@ async function loadFile(filePath: string) {
     renderStatsEl.textContent = `Rendered in ${(endTime - startTime).toFixed(1)}ms`;
 
     // Update window title to show filename
-    const appWindow = getCurrentWindow();
     await appWindow.setTitle(`${fileName} — Markup Reader`);
+
+    // Track current file for duplicate detection
+    await invoke('set_current_file', { filePath });
 
     setupImageErrorHandling(contentEl);
   } catch (err) {
@@ -191,6 +195,12 @@ listen<string>('open-file', async (event) => {
   console.log('[DEBUG] open-file event received:', event.payload);
   const filePath = event.payload;
   await loadFile(filePath);
+});
+
+// Listen for focus window events (when file is already open)
+listen<string>('focus-window', async (event) => {
+  console.log('[DEBUG] focus-window event received:', event.payload);
+  await appWindow.setFocus();
 });
 
 // Check if app was launched with a file argument (cold start file association)
