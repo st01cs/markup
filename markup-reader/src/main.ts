@@ -4,6 +4,7 @@ import { applyTheme, detectColorScheme, getCurrentTheme, toggleTheme as toggleTh
 import { readTextFileSafe, isFileTooLarge, formatFileSize, type FileError } from './lib/file-utils.js';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 
 const contentEl = document.getElementById('markdown-content')!;
 const welcomeEl = document.getElementById('welcome')!;
@@ -86,6 +87,10 @@ async function loadFile(filePath: string) {
 
     fileInfoEl.textContent = `${fileName} (${formatFileSize(size)})`;
     renderStatsEl.textContent = `Rendered in ${(endTime - startTime).toFixed(1)}ms`;
+
+    // Update window title to show filename
+    const appWindow = getCurrentWindow();
+    await appWindow.setTitle(`${fileName} — Markup Reader`);
 
     setupImageErrorHandling(contentEl);
   } catch (err) {
