@@ -10,23 +10,6 @@
 
   <body>
     <div id="app">
-      <header class="toolbar">
-        <button id="open-btn" class="toolbar-btn" title="Open File (Cmd+O)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
-          </svg>
-          <span>Open</span>
-        </button>
-        <button id="theme-btn" class="toolbar-btn" title="Toggle Theme (Cmd+Shift+D)">
-          <svg id="theme-icon-dark" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="5"/>
-            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-          </svg>
-          <svg id="theme-icon-light" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
-            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
-          </svg>
-        </button>
-      </header>
 
       <main id="content" class="content">
         <div id="welcome" class="welcome">
@@ -36,6 +19,35 @@
         </div>
         <article id="markdown-content" class="markdown-body" style="display:none"></article>
       </main>
+
+      <!-- Floating action widget -->
+      <div id="fab-widget" class="fab-widget">
+        <div class="fab-collapsed" id="fab-toggle" title="Menu">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/>
+            <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/>
+            <circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/>
+          </svg>
+        </div>
+        <div class="fab-expanded" id="fab-menu">
+          <div class="fab-item" id="fab-open">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+            </svg>
+            <span>Open File</span>
+          </div>
+          <div class="fab-item" id="fab-theme">
+            <svg id="fab-icon-dark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"/>
+              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            </svg>
+            <svg id="fab-icon-light" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+            </svg>
+            <span>Toggle Theme</span>
+          </div>
+        </div>
+      </div>
 
       <footer id="status-bar" class="status-bar">
         <span id="file-info"></span>

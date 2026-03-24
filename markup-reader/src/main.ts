@@ -10,8 +10,12 @@ const renderStatsEl = document.getElementById('render-stats')!;
 const errorOverlay = document.getElementById('error-overlay')!;
 const errorMessage = document.getElementById('error-message')!;
 const errorClose = document.getElementById('error-close')!;
-const openBtn = document.getElementById('open-btn')!;
-const themeBtn = document.getElementById('theme-btn')!;
+const fabWidget = document.getElementById('fab-widget')!;
+const fabToggle = document.getElementById('fab-toggle')!;
+const fabOpen = document.getElementById('fab-open')!;
+const fabTheme = document.getElementById('fab-theme')!;
+const fabIconDark = document.getElementById('fab-icon-dark')!;
+const fabIconLight = document.getElementById('fab-icon-light')!;
 
 function setupImageErrorHandling(container: HTMLElement) {
   const observer = new MutationObserver((mutations) => {
@@ -103,12 +107,41 @@ function hideError() {
 
 function handleToggleTheme() {
   const current = getCurrentTheme();
-  const next = toggleThemeFn(current === 'dark');
+  const isDark = current === 'dark';
+  const next = toggleThemeFn(isDark);
   applyTheme(next);
+  // Update FAB icon
+  if (next) {
+    fabIconDark.style.display = '';
+    fabIconLight.style.display = 'none';
+  } else {
+    fabIconDark.style.display = 'none';
+    fabIconLight.style.display = '';
+  }
 }
 
-openBtn.addEventListener('click', openFile);
-themeBtn.addEventListener('click', handleToggleTheme);
+// Floating widget
+fabToggle.addEventListener('click', (e) => {
+  e.stopPropagation();
+  fabWidget.classList.toggle('expanded');
+});
+
+fabOpen.addEventListener('click', () => {
+  fabWidget.classList.remove('expanded');
+  openFile();
+});
+
+fabTheme.addEventListener('click', () => {
+  fabWidget.classList.remove('expanded');
+  handleToggleTheme();
+});
+
+document.addEventListener('click', (e) => {
+  if (e.target instanceof Element && !e.target.closest('.fab-widget')) {
+    fabWidget.classList.remove('expanded');
+  }
+});
+
 errorClose.addEventListener('click', hideError);
 
 document.addEventListener('keydown', (e) => {
@@ -125,4 +158,12 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-applyTheme(detectColorScheme() === 'dark');
+const initialDark = detectColorScheme() === 'dark';
+applyTheme(initialDark);
+if (initialDark) {
+  fabIconDark.style.display = '';
+  fabIconLight.style.display = 'none';
+} else {
+  fabIconDark.style.display = 'none';
+  fabIconLight.style.display = '';
+}
