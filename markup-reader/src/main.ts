@@ -112,6 +112,8 @@ function handleToggleTheme() {
   const isDark = current === 'dark';
   const next = toggleThemeFn(isDark);
   applyTheme(next);
+  // Save preference to localStorage
+  localStorage.setItem('theme', next ? 'dark' : 'light');
   // Update FAB icon
   if (next) {
     fabIconDark.style.display = '';
@@ -160,7 +162,16 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-const initialDark = detectColorScheme() === 'dark';
+// Load saved theme preference, or fall back to system preference
+function getInitialTheme(): boolean {
+  const saved = localStorage.getItem('theme');
+  if (saved !== null) {
+    return saved === 'dark';
+  }
+  return detectColorScheme() === 'dark';
+}
+
+const initialDark = getInitialTheme();
 applyTheme(initialDark);
 if (initialDark) {
   fabIconDark.style.display = '';
