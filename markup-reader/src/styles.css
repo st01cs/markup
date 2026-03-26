@@ -282,12 +282,32 @@ kbd {
 .status-bar {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 6px 16px;
   background: var(--status-bar-bg);
   border-top: 1px solid var(--border-color);
   font-size: 12px;
   color: var(--text-muted);
   flex-shrink: 0;
+}
+
+/* Reading progress bar */
+.progress-container {
+  flex: 1;
+  max-width: 200px;
+  height: 4px;
+  background: var(--border-color);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 0 16px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--accent-color);
+  width: 0%;
+  transition: width 0.1s ease-out;
+  border-radius: 2px;
 }
 
 /* Error overlay */

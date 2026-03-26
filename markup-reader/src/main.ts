@@ -12,6 +12,8 @@ const contentEl = document.getElementById('markdown-content')!;
 const welcomeEl = document.getElementById('welcome')!;
 const fileInfoEl = document.getElementById('file-info')!;
 const renderStatsEl = document.getElementById('render-stats')!;
+const progressBar = document.getElementById('progress-bar')!;
+const progressContainer = document.getElementById('progress-container')!;
 const errorOverlay = document.getElementById('error-overlay')!;
 const errorMessage = document.getElementById('error-message')!;
 const errorClose = document.getElementById('error-close')!;
@@ -97,6 +99,10 @@ async function loadFile(filePath: string) {
     await invoke('set_current_file', { filePath });
 
     setupImageErrorHandling(contentEl);
+
+    // Reset and show progress bar when new file is loaded
+    updateProgress();
+    updateProgressVisibility();
   } catch (err) {
     const fileError = err as FileError;
     if (fileError.type === 'encoding') {
@@ -202,6 +208,24 @@ listen<string>('focus-window', async (event) => {
   console.log('[DEBUG] focus-window event received:', event.payload);
   await appWindow.setFocus();
 });
+
+// Track scroll position for reading progress
+function updateProgress() {
+  const scrollTop = contentEl.scrollTop;
+  const scrollHeight = contentEl.scrollHeight - contentEl.clientHeight;
+  if (scrollHeight > 0) {
+    const progress = (scrollTop / scrollHeight) * 100;
+    progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+  }
+}
+
+// Show/hide progress bar based on whether a file is loaded
+function updateProgressVisibility() {
+  progressContainer.style.display = welcomeEl.style.display === 'none' ? 'block' : 'none';
+}
+
+// Add scroll listener to content area
+contentEl.addEventListener('scroll', updateProgress);
 
 // Check if app was launched with a file argument (cold start file association)
 // Poll for pending file since on_open_url may fire after initial check on cold start
