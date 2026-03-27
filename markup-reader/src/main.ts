@@ -213,7 +213,7 @@ listen<string>('focus-window', async (event) => {
 // Track scroll position for reading progress
 function updateProgress() {
   const scrollTop = scrollContainer.scrollTop;
-  const scrollHeight = contentEl.scrollHeight - scrollContainer.clientHeight;
+  const scrollHeight = scrollContainer.scrollHeight - scrollContainer.clientHeight;
   // Show 100% if content fits in viewport (scrollHeight <= 0), otherwise calculate progress
   if (scrollHeight <= 0) {
     progressBar.style.width = '100%';
