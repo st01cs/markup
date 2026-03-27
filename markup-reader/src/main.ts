@@ -9,6 +9,7 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 const appWindow = getCurrentWindow();
 
 const contentEl = document.getElementById('markdown-content')!;
+const scrollContainer = document.getElementById('content')!;
 const welcomeEl = document.getElementById('welcome')!;
 const fileInfoEl = document.getElementById('file-info')!;
 const renderStatsEl = document.getElementById('render-stats')!;
@@ -211,8 +212,8 @@ listen<string>('focus-window', async (event) => {
 
 // Track scroll position for reading progress
 function updateProgress() {
-  const scrollTop = contentEl.scrollTop;
-  const scrollHeight = contentEl.scrollHeight - contentEl.clientHeight;
+  const scrollTop = scrollContainer.scrollTop;
+  const scrollHeight = contentEl.scrollHeight - scrollContainer.clientHeight;
   // Show 100% if content fits in viewport (scrollHeight <= 0), otherwise calculate progress
   if (scrollHeight <= 0) {
     progressBar.style.width = '100%';
@@ -234,8 +235,8 @@ function updateProgressVisibility() {
   progressContainer.style.display = welcomeEl.style.display === 'none' ? 'block' : 'none';
 }
 
-// Add scroll listener to content area
-contentEl.addEventListener('scroll', updateProgress);
+// Add scroll listener to scrollable container
+scrollContainer.addEventListener('scroll', updateProgress);
 
 // Check if app was launched with a file argument (cold start file association)
 // Poll for pending file since on_open_url may fire after initial check on cold start
