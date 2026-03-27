@@ -5,7 +5,7 @@
 **Project**: Markup Reader — Floating TOC Sidebar
 **Core value**: Distraction-free Markdown reading with instant navigation — open any Markdown file and read it comfortably, with the ability to jump to any section in one click.
 **Current phase**: Phase 1: Floating TOC Sidebar
-**Current focus**: Awaiting roadmap approval
+**Current focus**: Phase 1 context gathered — ready for planning
 
 ## Current Position
 
@@ -45,6 +45,7 @@
 
 - Phase 1 planning: `/gsd:plan-phase 1`
 - After phase 1 complete: `/gsd:transition 1`
+- Context file: `.planning/phases/01-floating-toc-sidebar/01-CONTEXT.md`
 
 ---
 
