@@ -9,12 +9,9 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 const appWindow = getCurrentWindow();
 
 const contentEl = document.getElementById('markdown-content')!;
-const scrollContainer = document.getElementById('content')!;
 const welcomeEl = document.getElementById('welcome')!;
 const fileInfoEl = document.getElementById('file-info')!;
 const renderStatsEl = document.getElementById('render-stats')!;
-const progressBar = document.getElementById('progress-bar')!;
-const progressContainer = document.getElementById('progress-container')!;
 const errorOverlay = document.getElementById('error-overlay')!;
 const errorMessage = document.getElementById('error-message')!;
 const errorClose = document.getElementById('error-close')!;
@@ -100,10 +97,6 @@ async function loadFile(filePath: string) {
     await invoke('set_current_file', { filePath });
 
     setupImageErrorHandling(contentEl);
-
-    // Reset and show progress bar when new file is loaded
-    updateProgressAfterLayout();
-    updateProgressVisibility();
   } catch (err) {
     const fileError = err as FileError;
     if (fileError.type === 'encoding') {
@@ -209,34 +202,6 @@ listen<string>('focus-window', async (event) => {
   console.log('[DEBUG] focus-window event received:', event.payload);
   await appWindow.setFocus();
 });
-
-// Track scroll position for reading progress
-function updateProgress() {
-  const scrollTop = scrollContainer.scrollTop;
-  const scrollableHeight = scrollContainer.scrollHeight - scrollContainer.clientHeight;
-  // Show 100% if content fits in viewport (scrollableHeight <= 0), otherwise calculate progress
-  if (scrollableHeight <= 0) {
-    progressBar.style.width = '100%';
-  } else {
-    const progress = (scrollTop / scrollableHeight) * 100;
-    progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
-  }
-}
-
-// Update progress after browser has laid out the new content
-function updateProgressAfterLayout() {
-  requestAnimationFrame(() => {
-    updateProgress();
-  });
-}
-
-// Show/hide progress bar based on whether a file is loaded
-function updateProgressVisibility() {
-  progressContainer.style.display = welcomeEl.style.display === 'none' ? 'block' : 'none';
-}
-
-// Add scroll listener to scrollable container
-scrollContainer.addEventListener('scroll', updateProgress);
 
 // Check if app was launched with a file argument (cold start file association)
 // Poll for pending file since on_open_url may fire after initial check on cold start

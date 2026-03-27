@@ -292,25 +292,6 @@ kbd {
   flex-shrink: 0;
 }
 
-/* Reading progress bar */
-.progress-container {
-  flex: 1;
-  max-width: 200px;
-  height: 4px;
-  background: var(--border-color);
-  border-radius: 2px;
-  overflow: hidden;
-  margin: 0 16px;
-}
-
-.progress-bar {
-  height: 100%;
-  background: var(--accent-color);
-  width: 0%;
-  transition: width 0.1s ease-out;
-  border-radius: 2px;
-}
-
 /* Error overlay */
 .error-overlay {
   position: fixed;
