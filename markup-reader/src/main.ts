@@ -101,7 +101,7 @@ async function loadFile(filePath: string) {
     setupImageErrorHandling(contentEl);
 
     // Reset and show progress bar when new file is loaded
-    updateProgress();
+    updateProgressAfterLayout();
     updateProgressVisibility();
   } catch (err) {
     const fileError = err as FileError;
@@ -213,10 +213,20 @@ listen<string>('focus-window', async (event) => {
 function updateProgress() {
   const scrollTop = contentEl.scrollTop;
   const scrollHeight = contentEl.scrollHeight - contentEl.clientHeight;
-  if (scrollHeight > 0) {
+  // Show 100% if content fits in viewport (scrollHeight <= 0), otherwise calculate progress
+  if (scrollHeight <= 0) {
+    progressBar.style.width = '100%';
+  } else {
     const progress = (scrollTop / scrollHeight) * 100;
     progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
   }
+}
+
+// Update progress after browser has laid out the new content
+function updateProgressAfterLayout() {
+  requestAnimationFrame(() => {
+    updateProgress();
+  });
 }
 
 // Show/hide progress bar based on whether a file is loaded
