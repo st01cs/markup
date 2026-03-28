@@ -209,8 +209,8 @@ document.addEventListener('click', (e) => {
   if (target && !target.closest('.fab-widget')) {
     fabWidget.classList.remove('expanded');
   }
-  // Close TOC panel if clicking outside on content area
-  if (isTocPanelOpen && target && !target.closest('#toc-panel') && !target.closest('.fab-widget')) {
+  // Close TOC panel if clicking outside on content area and outside FAB TOC button
+  if (isTocPanelOpen && target && !target.closest('#toc-panel') && !target.closest('.fab-widget') && !target.closest('#fab-toc')) {
     closeTocPanel();
   }
 });
