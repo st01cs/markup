@@ -205,11 +205,12 @@ fabToc.addEventListener('click', () => {
 });
 
 document.addEventListener('click', (e) => {
-  if (e.target instanceof Element && !e.target.closest('.fab-widget')) {
+  const target = e.target instanceof Element ? e.target : null;
+  if (target && !target.closest('.fab-widget')) {
     fabWidget.classList.remove('expanded');
   }
   // Close TOC panel if clicking outside on content area
-  if (isTocPanelOpen && !e.target.closest('#toc-panel') && !e.target.closest('.fab-widget')) {
+  if (isTocPanelOpen && target && !target.closest('#toc-panel') && !target.closest('.fab-widget')) {
     closeTocPanel();
   }
 });
