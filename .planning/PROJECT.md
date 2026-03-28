@@ -12,21 +12,23 @@ Distraction-free Markdown reading with instant navigation — open any Markdown 
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] **TOC-01**: Extract H1-H3 headings from markdown and expose via `RenderResult.headings`
+- [x] **TOC-02**: Show TOC FAB button when document has headings, hide when no headings
+- [x] **TOC-03**: Floating panel slides in from left (200ms ease-out) on TOC FAB click
+- [x] **TOC-04**: Headings displayed with hierarchical indentation (H1=8px, H2=24px, H3=40px)
+- [x] **TOC-05**: Click heading → smooth scroll to section
+- [x] **TOC-06**: Escape key or content-area click closes panel
+- [x] **TOC-07**: Panel accessible: keyboard navigable, aria roles, focus management
+- [x] **TOC-08**: Dark/light mode styled correctly
+- [x] **TOC-09**: Responsive: full-width panel on screens < 600px
+- [x] **TEST-01**: Unit tests for heading extraction (edge cases: duplicates, special chars, empty)
+- [x] **TEST-02**: E2E tests for TOC interactions (show/hide, open/close, scroll)
+
+Validated in Phase 01: Floating TOC Sidebar
 
 ### Active
 
-- [ ] **TOC-01**: Extract H1-H3 headings from markdown and expose via `RenderResult.headings`
-- [ ] **TOC-02**: Show TOC FAB button when document has headings, hide when no headings
-- [ ] **TOC-03**: Floating panel slides in from left (200ms ease-out) on TOC FAB click
-- [ ] **TOC-04**: Headings displayed with hierarchical indentation (H1=8px, H2=24px, H3=40px)
-- [ ] **TOC-05**: Click heading → smooth scroll to section
-- [ ] **TOC-06**: Escape key or content-area click closes panel
-- [ ] **TOC-07**: Panel accessible: keyboard navigable, aria roles, focus management
-- [ ] **TOC-08**: Dark/light mode styled correctly
-- [ ] **TOC-09**: Responsive: full-width panel on screens < 600px
-- [ ] **TEST-01**: Unit tests for heading extraction (edge cases: duplicates, special chars, empty)
-- [ ] **TEST-02**: E2E tests for TOC interactions (show/hide, open/close, scroll)
+(None)
 
 ### Out of Scope
 
