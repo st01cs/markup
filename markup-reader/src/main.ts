@@ -10,13 +10,11 @@ const appWindow = getCurrentWindow();
 
 const contentEl = document.getElementById('markdown-content')!;
 const welcomeEl = document.getElementById('welcome')!;
-const fileInfoEl = document.getElementById('file-info')!;
-const renderStatsEl = document.getElementById('render-stats')!;
 const errorOverlay = document.getElementById('error-overlay')!;
 const errorMessage = document.getElementById('error-message')!;
 const errorClose = document.getElementById('error-close')!;
-const fabWidget = document.getElementById('fab-widget')!;
 const fabToggle = document.getElementById('fab-toggle')!;
+const fabMenu = document.getElementById('fab-menu')!;
 const fabOpen = document.getElementById('fab-open')!;
 const fabTheme = document.getElementById('fab-theme')!;
 const fabIconDark = document.getElementById('fab-icon-dark')!;
@@ -31,7 +29,7 @@ function openTocPanel() {
   isTocPanelOpen = true;
   tocPanel.classList.add('open');
   tocPanel.style.display = 'flex';
-  fabWidget.classList.remove('expanded');
+  fabMenu.classList.remove('open');
   const firstItem = tocList.querySelector('.toc-item') as HTMLButtonElement | null;
   if (firstItem) firstItem.focus();
 }
@@ -112,9 +110,7 @@ async function loadFile(filePath: string) {
       return;
     }
 
-    const startTime = performance.now();
     const { html, errors, headings } = renderMarkdown(content);
-    const endTime = performance.now();
 
     if (errors.length > 0) {
       showError(`Render errors: ${errors.join(', ')}`);
@@ -124,9 +120,6 @@ async function loadFile(filePath: string) {
     contentEl.innerHTML = html;
     contentEl.style.display = 'block';
     welcomeEl.style.display = 'none';
-
-    fileInfoEl.textContent = `${fileName} (${formatFileSize(size)})`;
-    renderStatsEl.textContent = `Rendered in ${(endTime - startTime).toFixed(1)}ms`;
 
     // Update window title to show filename
     await appWindow.setTitle(`${fileName} — Markup Reader`);
@@ -180,19 +173,19 @@ function handleToggleTheme() {
   }
 }
 
-// Floating widget
+// Floating menu
 fabToggle.addEventListener('click', (e) => {
   e.stopPropagation();
-  fabWidget.classList.toggle('expanded');
+  fabMenu.classList.toggle('open');
 });
 
 fabOpen.addEventListener('click', () => {
-  fabWidget.classList.remove('expanded');
+  fabMenu.classList.remove('open');
   openFile();
 });
 
 fabTheme.addEventListener('click', () => {
-  fabWidget.classList.remove('expanded');
+  fabMenu.classList.remove('open');
   handleToggleTheme();
 });
 
@@ -206,11 +199,11 @@ fabToc.addEventListener('click', () => {
 
 document.addEventListener('click', (e) => {
   const target = e.target instanceof Element ? e.target : null;
-  if (target && !target.closest('.fab-widget')) {
-    fabWidget.classList.remove('expanded');
+  if (target && !target.closest('#fab-menu') && !target.closest('#fab-toggle')) {
+    fabMenu.classList.remove('open');
   }
   // Close TOC panel if clicking outside on content area and outside FAB TOC button
-  if (isTocPanelOpen && target && !target.closest('#toc-panel') && !target.closest('.fab-widget') && !target.closest('#fab-toc')) {
+  if (isTocPanelOpen && target && !target.closest('#toc-panel') && !target.closest('#fab-menu') && !target.closest('#fab-toggle') && !target.closest('#fab-toc')) {
     closeTocPanel();
   }
 });

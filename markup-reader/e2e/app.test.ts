@@ -100,18 +100,6 @@ test.describe('Markup Reader E2E', () => {
     await expect(page.locator('#welcome')).toBeHidden();
   });
 
-  test('status bar shows file info after loading', async ({ page }) => {
-    await page.evaluate(() => {
-      const fileInfoEl = document.getElementById('file-info')!;
-      const renderStatsEl = document.getElementById('render-stats')!;
-      fileInfoEl.textContent = 'test.md (1.2 KB)';
-      renderStatsEl.textContent = 'Rendered in 5.0ms';
-    });
-
-    await expect(page.locator('#file-info')).toHaveText('test.md (1.2 KB)');
-    await expect(page.locator('#render-stats')).toContainText('Rendered in');
-  });
-
   test('error overlay shows error message and dismiss button', async ({ page }) => {
     await page.evaluate(() => {
       const errorOverlay = document.getElementById('error-overlay')!;

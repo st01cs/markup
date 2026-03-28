@@ -311,6 +311,29 @@ kbd {
   background: var(--bg-tertiary);
 }
 
+/* FAB button in status bar */
+.status-fab-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 12px;
+  transition: background 0.15s;
+}
+
+.status-fab-btn:hover {
+  background: var(--bg-tertiary);
+}
+
+.status-fab-btn svg {
+  stroke: var(--text-secondary);
+}
+
 .status-toc-btn svg {
   stroke: currentColor;
   flex-shrink: 0;
@@ -365,59 +388,24 @@ kbd {
   background: var(--text-muted);
 }
 
-/* Floating action widget */
-.fab-widget {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-  z-index: 100;
-}
-
-.fab-collapsed {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  opacity: 0.35;
-  transition: opacity 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.fab-collapsed:hover {
-  opacity: 1;
-  transform: scale(1.08);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.fab-collapsed svg {
-  stroke: var(--text-secondary);
-}
-
+/* Floating action menu */
 .fab-expanded {
   display: none;
+  position: fixed;
+  bottom: 48px;
+  right: 16px;
   flex-direction: column;
   gap: 4px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 6px;
+  z-index: 100;
   animation: fab-in 0.15s ease-out;
 }
 
-.fab-widget.expanded .fab-expanded {
+.fab-expanded.open {
   display: flex;
-}
-
-.fab-widget.expanded .fab-collapsed {
-  display: none;
 }
 
 @keyframes fab-in {
