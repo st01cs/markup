@@ -20,10 +20,12 @@ const fabTheme = document.getElementById('fab-theme')!;
 const fabIconDark = document.getElementById('fab-icon-dark')!;
 const fabIconLight = document.getElementById('fab-icon-light')!;
 const fabToc = document.getElementById('fab-toc') as HTMLButtonElement;
+const fabEdit = document.getElementById('fab-edit')!;
 const tocPanel = document.getElementById('toc-panel') as HTMLElement;
 const tocList = document.getElementById('toc-list') as HTMLElement;
 
 let isTocPanelOpen = false;
+let currentFilePath: string | null = null;
 
 function openTocPanel() {
   isTocPanelOpen = true;
@@ -127,6 +129,9 @@ async function loadFile(filePath: string) {
     // Track current file for duplicate detection
     await invoke('set_current_file', { filePath });
 
+    // Track current file path for Edit action
+    currentFilePath = filePath;
+
     setupImageErrorHandling(contentEl);
 
     // Show/hide FAB TOC button based on whether document has headings
@@ -189,6 +194,25 @@ fabTheme.addEventListener('click', () => {
   handleToggleTheme();
 });
 
+fabEdit.addEventListener('click', async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  fabMenu.classList.remove('open');
+  if (currentFilePath) {
+    const storedEditor = localStorage.getItem('preferredEditor');
+    if (storedEditor) {
+      await invoke('open_file_external', { path: currentFilePath, editorApp: storedEditor });
+    } else {
+      // First time: ask user to choose an editor
+      const chosen = await invoke<string | null>('choose_editor_app');
+      if (chosen) {
+        localStorage.setItem('preferredEditor', chosen);
+        await invoke('open_file_external', { path: currentFilePath, editorApp: chosen });
+      }
+    }
+  }
+});
+
 fabToc.addEventListener('click', () => {
   if (isTocPanelOpen) {
     closeTocPanel();
@@ -248,32 +272,26 @@ if (initialDark) {
 
 // Listen for file open events from macOS file association
 listen<string>('open-file', async (event) => {
-  console.log('[DEBUG] open-file event received:', event.payload);
   const filePath = event.payload;
   await loadFile(filePath);
 });
 
 // Listen for focus window events (when file is already open)
-listen<string>('focus-window', async (event) => {
-  console.log('[DEBUG] focus-window event received:', event.payload);
+listen<string>('focus-window', async () => {
   await appWindow.setFocus();
 });
 
 // Check if app was launched with a file argument (cold start file association)
 // Poll for pending file since on_open_url may fire after initial check on cold start
 async function checkPendingFile(retries = 20) {
-  console.log('[DEBUG] checkPendingFile: starting');
   for (let i = 0; i < retries; i++) {
     const pending = await invoke<string | null>('get_pending_file');
-    console.log(`[DEBUG] checkPendingFile attempt ${i + 1}:`, pending);
     if (pending) {
-      console.log('[DEBUG] checkPendingFile: loading file:', pending);
       await loadFile(pending);
       return;
     }
     await new Promise(resolve => setTimeout(resolve, 50));
   }
-  console.log('[DEBUG] checkPendingFile: no pending file found after retries');
 }
 
 // Start polling for pending file (will exit early if already set)

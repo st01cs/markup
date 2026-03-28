@@ -314,6 +314,7 @@ kbd {
 /* FAB button in status bar */
 .status-fab-btn {
   display: flex;
+  margin-left: auto;
   align-items: center;
   justify-content: center;
   padding: 4px 8px;
