@@ -277,3 +277,145 @@ describe('XSS injection scenarios', () => {
     expect(html).toContain('href="https://example.com"');
   });
 });
+
+describe('heading extraction', () => {
+  describe('H1-H3 extraction', () => {
+    it('extracts H1 headings', () => {
+      const input = '# Hello World';
+      const { headings } = renderMarkdown(input);
+      expect(headings).toHaveLength(1);
+      expect(headings[0]).toEqual({ level: 1, text: 'Hello World', id: 'hello-world' });
+    });
+
+    it('extracts H2 headings', () => {
+      const input = '## Section Two';
+      const { headings } = renderMarkdown(input);
+      expect(headings).toHaveLength(1);
+      expect(headings[0]).toEqual({ level: 2, text: 'Section Two', id: 'section-two' });
+    });
+
+    it('extracts H3 headings', () => {
+      const input = '### Subsection';
+      const { headings } = renderMarkdown(input);
+      expect(headings).toHaveLength(1);
+      expect(headings[0]).toEqual({ level: 3, text: 'Subsection', id: 'subsection' });
+    });
+
+    it('extracts multiple headings of different levels', () => {
+      const input = '# Title\n\n## Section\n\n### Subsection\n\nParagraph';
+      const { headings } = renderMarkdown(input);
+      expect(headings).toHaveLength(3);
+      expect(headings[0]).toEqual({ level: 1, text: 'Title', id: 'title' });
+      expect(headings[1]).toEqual({ level: 2, text: 'Section', id: 'section' });
+      expect(headings[2]).toEqual({ level: 3, text: 'Subsection', id: 'subsection' });
+    });
+  });
+
+  describe('H4+ ignored', () => {
+    it('ignores H4 headings', () => {
+      const input = '# H1\n\n#### H4 Heading\n\n## H2';
+      const { headings } = renderMarkdown(input);
+      expect(headings).toHaveLength(2);
+      expect(headings.map(h => h.level)).toEqual([1, 2]);
+    });
+
+    it('ignores H5 and H6 headings', () => {
+      const input = '##### H5\n\n###### H6';
+      const { headings } = renderMarkdown(input);
+      expect(headings).toHaveLength(0);
+    });
+
+    it('extracts H1-H3 even when H4+ present', () => {
+      const input = '# Title\n\n#### H4\n\n## Section\n\n##### H5\n\n### H3';
+      const { headings } = renderMarkdown(input);
+      expect(headings).toHaveLength(3);
+      expect(headings.map(h => h.level)).toEqual([1, 2, 3]);
+    });
+  });
+
+  describe('slug ID generation', () => {
+    it('generates lowercase hyphenated IDs', () => {
+      const input = '# Hello World';
+      const { headings } = renderMarkdown(input);
+      expect(headings[0].id).toBe('hello-world');
+    });
+
+    it('handles multiple words', () => {
+      const input = '# This Is A Long Heading';
+      const { headings } = renderMarkdown(input);
+      expect(headings[0].id).toBe('this-is-a-long-heading');
+    });
+  });
+
+  describe('duplicate heading handling', () => {
+    it('generates unique IDs for duplicate headings', () => {
+      const input = '## Duplicate\n\n## Duplicate';
+      const { headings } = renderMarkdown(input);
+      expect(headings).toHaveLength(2);
+      expect(headings[0].id).toBe('duplicate');
+      expect(headings[1].id).toBe('duplicate-1');
+    });
+
+    it('handles three duplicate headings', () => {
+      const input = '## Same\n\n## Same\n\n## Same';
+      const { headings } = renderMarkdown(input);
+      expect(headings).toHaveLength(3);
+      expect(headings[0].id).toBe('same');
+      expect(headings[1].id).toBe('same-1');
+      expect(headings[2].id).toBe('same-2');
+    });
+
+    it('duplicate detection is case-insensitive', () => {
+      const input = '## Title\n\n## title\n\n## TITLE';
+      const { headings } = renderMarkdown(input);
+      expect(headings[0].id).toBe('title');
+      expect(headings[1].id).toBe('title-1');
+      expect(headings[2].id).toBe('title-2');
+    });
+  });
+
+  describe('special characters', () => {
+    it('handles headings with special characters', () => {
+      const input = '# Hello @#$%^&*()';
+      const { headings } = renderMarkdown(input);
+      expect(headings[0].id).toBe('hello');
+    });
+
+    it('handles headings with unicode characters', () => {
+      const input = '# Hello World';
+      const { headings } = renderMarkdown(input);
+      expect(headings[0].id).toBe('hello-world');
+    });
+
+    it('handles heading with only special characters', () => {
+      const input = '# @#$%';
+      const { headings } = renderMarkdown(input);
+      // Falls back to 'heading' when slug is empty
+      expect(headings[0].id).toBe('heading');
+    });
+
+    it('handles heading with leading/trailing special chars', () => {
+      const input = '# ---hello---';
+      const { headings } = renderMarkdown(input);
+      expect(headings[0].id).toBe('hello');
+    });
+  });
+
+  describe('empty document handling', () => {
+    it('returns empty array for document with no headings', () => {
+      const input = 'Just a paragraph with no headings.';
+      const { headings } = renderMarkdown(input);
+      expect(headings).toHaveLength(0);
+    });
+
+    it('returns empty array for empty input', () => {
+      const { headings } = renderMarkdown('');
+      expect(headings).toHaveLength(0);
+    });
+
+    it('returns empty array for whitespace-only input', () => {
+      const { headings } = renderMarkdown('   \n\n  ');
+      expect(headings).toHaveLength(0);
+    });
+  });
+});
