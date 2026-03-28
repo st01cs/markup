@@ -46,7 +46,20 @@
             </svg>
             <span>Toggle Theme</span>
           </div>
+          <div class="fab-item" id="fab-toc" style="display: none;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+            <span>Contents</span>
+          </div>
         </div>
+      </div>
+
+      <div id="toc-panel" class="toc-panel" role="dialog" aria-label="Table of contents" style="display: none;">
+        <div class="toc-header">Contents</div>
+        <div class="toc-list"></div>
       </div>
 
       <footer id="status-bar" class="status-bar">

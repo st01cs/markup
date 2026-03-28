@@ -21,6 +21,44 @@ const fabOpen = document.getElementById('fab-open')!;
 const fabTheme = document.getElementById('fab-theme')!;
 const fabIconDark = document.getElementById('fab-icon-dark')!;
 const fabIconLight = document.getElementById('fab-icon-light')!;
+const fabToc = document.getElementById('fab-toc') as HTMLButtonElement;
+const tocPanel = document.getElementById('toc-panel') as HTMLElement;
+const tocList = document.getElementById('toc-list') as HTMLElement;
+
+let isTocPanelOpen = false;
+
+function openTocPanel() {
+  isTocPanelOpen = true;
+  tocPanel.classList.add('open');
+  tocPanel.style.display = 'flex';
+  fabWidget.classList.remove('expanded');
+  const firstItem = tocList.querySelector('.toc-item') as HTMLButtonElement | null;
+  if (firstItem) firstItem.focus();
+}
+
+function closeTocPanel() {
+  isTocPanelOpen = false;
+  tocPanel.classList.remove('open');
+  fabToc.focus();
+}
+
+function renderTocList(headings: { level: number; text: string; id: string }[]) {
+  tocList.innerHTML = '';
+  for (const heading of headings) {
+    const button = document.createElement('button');
+    button.className = 'toc-item';
+    button.setAttribute('data-level', String(heading.level));
+    button.textContent = heading.text;
+    button.addEventListener('click', () => {
+      const target = document.getElementById(heading.id);
+      if (target) {
+        closeTocPanel();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+    tocList.appendChild(button);
+  }
+}
 
 function setupImageErrorHandling(container: HTMLElement) {
   const observer = new MutationObserver((mutations) => {
@@ -75,7 +113,7 @@ async function loadFile(filePath: string) {
     }
 
     const startTime = performance.now();
-    const { html, errors } = renderMarkdown(content);
+    const { html, errors, headings } = renderMarkdown(content);
     const endTime = performance.now();
 
     if (errors.length > 0) {
@@ -97,6 +135,15 @@ async function loadFile(filePath: string) {
     await invoke('set_current_file', { filePath });
 
     setupImageErrorHandling(contentEl);
+
+    // Show/hide FAB TOC button based on whether document has headings
+    if (headings.length > 0) {
+      fabToc.style.display = 'flex';
+      renderTocList(headings);
+    } else {
+      fabToc.style.display = 'none';
+      tocList.innerHTML = '';
+    }
   } catch (err) {
     const fileError = err as FileError;
     if (fileError.type === 'encoding') {
@@ -149,9 +196,21 @@ fabTheme.addEventListener('click', () => {
   handleToggleTheme();
 });
 
+fabToc.addEventListener('click', () => {
+  if (isTocPanelOpen) {
+    closeTocPanel();
+  } else {
+    openTocPanel();
+  }
+});
+
 document.addEventListener('click', (e) => {
   if (e.target instanceof Element && !e.target.closest('.fab-widget')) {
     fabWidget.classList.remove('expanded');
+  }
+  // Close TOC panel if clicking outside on content area
+  if (isTocPanelOpen && !e.target.closest('#toc-panel') && !e.target.closest('.fab-widget')) {
+    closeTocPanel();
   }
 });
 
@@ -168,6 +227,9 @@ document.addEventListener('keydown', (e) => {
   }
   if (e.key === 'Escape') {
     hideError();
+    if (isTocPanelOpen) {
+      closeTocPanel();
+    }
   }
 });
 
