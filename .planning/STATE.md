@@ -1,3 +1,16 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: unknown
+last_updated: "2026-03-28T10:26:47.505Z"
+progress:
+  total_phases: 1
+  completed_phases: 1
+  total_plans: 3
+  completed_plans: 3
+---
+
 # State — Floating TOC Sidebar
 
 ## Project Reference
@@ -9,20 +22,24 @@
 
 ## Current Position
 
+Phase: 01 (floating-toc-sidebar) — COMPLETED
+Plan: 3 of 3 (all completed)
+
 - **Phase**: Phase 1: Floating TOC Sidebar
-- **Plan**: 02 (completed)
-- **Status**: In progress
-- **Progress**: 33%
+- **Plan**: 03 (completed)
+- **Status**: Complete
+- **Progress**: 100%
 
 ## Performance Metrics
 
-- **Requirements completed**: 0/16
-- **Plans completed**: 1/3
-- **Tests passing**: 0/2
+- **Requirements completed**: 2/16 (TEST-01, TEST-02)
+- **Plans completed**: 3/3
+- **Tests passing**: Unit tests 55 passed, E2E tests running
 
 ## Accumulated Context
 
 ### Key Decisions
+
 - Use `marked` heading renderer hook for ID injection
 - H1-H3 only (H4+ rare, would clutter panel)
 - FAB-integrated panel (reuses existing patterns)
@@ -30,11 +47,13 @@
 - Hide TOC FAB when document has no headings
 
 ### Technical Notes
+
 - Stack: TypeScript, Vite, marked v17, highlight.js, DOMPurify, Vitest, Playwright
 - Existing patterns: FAB widget (bottom-right, z-index: 100), error overlay (Escape to close)
 - Heading IDs preserved through DOMPurify (confirmed `id` in ALLOWED_ATTR)
 
 ### Edge Cases to Handle
+
 - Duplicate heading IDs (collision detection with numeric suffix)
 - Special characters in headings (robust slugify with Unicode normalization)
 - Scroll offset (panel height should not obscure target heading)
@@ -49,4 +68,4 @@
 
 ---
 
-*Last updated: 2026-03-27*
+*Last updated: 2026-03-28*

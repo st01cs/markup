@@ -2,7 +2,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: Floating TOC Sidebar** — Users can view document structure and navigate to any H1-H3 heading via a floating panel
+- [x] **Phase 1: Floating TOC Sidebar** — Users can view document structure and navigate to any H1-H3 heading via a floating panel (completed 2026-03-28)
 
 ## Phase Details
 
@@ -31,7 +31,7 @@
 Plans:
 - [x] 01-01-PLAN.md — Extend renderer with heading extraction (TOC-01, TOC-03, TOC-05)
 - [x] 01-02-PLAN.md — Add TOC FAB button, panel HTML/CSS, and handlers (TOC-02, TOC-03, TOC-04, TOC-06, TOC-07, TOC-08, TOC-09, TOC-10, TOC-11, TOC-12, TOC-13, TOC-14)
-- [ ] 01-03-PLAN.md — Add unit and E2E tests (TEST-01, TEST-02)
+- [x] 01-03-PLAN.md — Add unit and E2E tests (TEST-01, TEST-02)
 
 **UI hint**: yes
 
@@ -39,7 +39,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Floating TOC Sidebar | 2/3 | In progress | - |
+| 1. Floating TOC Sidebar | 3/3 | Complete   | 2026-03-28 |
 
 ---
 

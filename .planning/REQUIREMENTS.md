@@ -27,14 +27,14 @@
 
 ### TOC-TEST: Testing
 
-- [ ] **TEST-01**: Unit tests for heading extraction:
+- [x] **TEST-01**: Unit tests for heading extraction:
   - Extracts H1, H2, H3 headings
   - Ignores H4 and deeper headings
   - Generates correct slug IDs (lowercase, hyphenated)
   - Handles duplicate heading text with unique suffixes
   - Returns empty array for no headings
   - Handles headings with special characters
-- [ ] **TEST-02**: E2E tests for TOC interactions:
+- [x] **TEST-02**: E2E tests for TOC interactions:
   - Shows TOC button when document has headings
   - Hides TOC button when document has no headings
   - Opens TOC panel on FAB click
@@ -72,8 +72,8 @@
 | TOC-12 | 1 | Pending |
 | TOC-13 | 1 | Pending |
 | TOC-14 | 1 | Pending |
-| TEST-01 | 1 | Pending |
-| TEST-02 | 1 | Pending |
+| TEST-01 | 1 | Complete |
+| TEST-02 | 1 | Complete |
 
 ---
 *Generated: 2026-03-27*
