@@ -71,6 +71,12 @@ Validated in Phase 01: Floating TOC Sidebar
 | Hide TOC button when no headings | Empty panel is worse than hidden button | ✓ Proceed |
 | Slugified heading IDs | Standard URL-friendly id generation | ✓ Proceed |
 
+## Current State
+
+**Milestone:** v1.0 Floating TOC Sidebar — SHIPPED 2026-03-28
+**Phase:** None (between milestones)
+**Core value:** Distraction-free Markdown reading with instant navigation
+
 ## Evolution
 
 This document evolves at phase transitions and milestone boundaries.
@@ -89,4 +95,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-27 after initialization*
+*Last updated: 2026-03-28 after v1.0 milestone*
