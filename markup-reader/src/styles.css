@@ -292,6 +292,30 @@ kbd {
   flex-shrink: 0;
 }
 
+/* TOC button in status bar */
+.status-toc-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 12px;
+  transition: background 0.15s;
+}
+
+.status-toc-btn:hover {
+  background: var(--bg-tertiary);
+}
+
+.status-toc-btn svg {
+  stroke: currentColor;
+  flex-shrink: 0;
+}
+
 /* Error overlay */
 .error-overlay {
   position: fixed;
