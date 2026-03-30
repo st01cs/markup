@@ -27,6 +27,32 @@ fn chrono_lite() -> String {
     format!("{}.{:09}", now.as_secs(), now.subsec_nanos())
 }
 
+fn expand_path(arg: &str) -> Option<String> {
+    // D-02: Expand tilde paths
+    if arg.starts_with("~/") {
+        std::env::var_os("HOME").map(|home| {
+            format!("{}{}", home.to_string_lossy(), &arg[1..])
+        })
+    } else {
+        Some(arg.to_string())
+    }
+}
+
+fn is_markdown_file(path: &str) -> bool {
+    // D-07: Accept only .md, .markdown, .txt
+    std::path::Path::new(path)
+        .extension()
+        .and_then(|e| e.to_str())
+        .map(|ext| matches!(ext, "md" | "markdown" | "txt"))
+        .unwrap_or(false)
+}
+
+fn cli_error(msg: &str, code: i32) -> ! {
+    // D-04, D-05, D-06, D-08: stderr error with configurable exit code
+    eprintln!("markup: {}", msg);
+    std::process::exit(code);
+}
+
 fn extract_file_path_from_args() -> Option<String> {
     let args: Vec<String> = std::env::args().collect();
     log_debug(&format!("[DEBUG] command line args: {:?}", args));
@@ -40,22 +66,47 @@ fn extract_file_path_from_args() -> Option<String> {
 
         log_debug(&format!("[DEBUG] checking arg: {}", arg));
 
-        // Check if it looks like a file path
-        if arg.starts_with('/') {
-            let is_markdown = arg.ends_with(".md") || arg.ends_with(".markdown") || arg.ends_with(".txt");
-            log_debug(&format!("[DEBUG] arg starts with /, is_markdown: {}", is_markdown));
-            if is_markdown {
-                log_debug(&format!("[DEBUG] found file path in args: {}", arg));
-                return Some(arg.clone());
-            }
-        }
-
-        // Also handle file:// URLs in args (some systems pass it this way)
+        // Handle file:// URLs in args (some systems pass it this way)
         if let Some(path) = arg.strip_prefix("file://") {
             let path = path.replace("%20", " ");
             log_debug(&format!("[DEBUG] found file:// in args: {}", path));
             return Some(path);
         }
+
+        // Expand tilde paths
+        let path = match expand_path(arg) {
+            Some(p) => p,
+            None => continue,
+        };
+
+        // Resolve relative paths to absolute
+        let abs_path = if path.starts_with('/') {
+            path.clone()
+        } else {
+            // Relative path - join with current directory
+            match std::env::current_dir() {
+                Ok(cwd) => cwd.join(&path).to_string_lossy().to_string(),
+                Err(e) => {
+                    log_debug(&format!("[DEBUG] failed to get current dir: {}", e));
+                    continue;
+                }
+            }
+        };
+
+        log_debug(&format!("[DEBUG] resolved path: {}", abs_path));
+
+        // Check if file exists
+        if !std::path::Path::new(&abs_path).exists() {
+            cli_error(&format!("File not found: {}", abs_path), 1);
+        }
+
+        // Check if it's a markdown file
+        if !is_markdown_file(&abs_path) {
+            cli_error(&format!("Not a markdown file: {}", abs_path), 2);
+        }
+
+        log_debug(&format!("[DEBUG] found valid file path in args: {}", abs_path));
+        return Some(abs_path);
     }
     None
 }
@@ -150,7 +201,7 @@ pub fn run() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![get_pending_file, set_current_file, clear_current_file])
+        .invoke_handler(tauri::generate_handler![get_pending_file, get_current_file, set_current_file, clear_current_file, open_file_external, choose_editor_app])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -160,6 +211,16 @@ fn get_pending_file(app: AppHandle) -> Option<String> {
     if let Some(state) = app.try_state::<AppState>() {
         let mut pending = state.pending_file.lock().unwrap();
         pending.take()
+    } else {
+        None
+    }
+}
+
+#[tauri::command]
+fn get_current_file(app: AppHandle) -> Option<String> {
+    if let Some(state) = app.try_state::<AppState>() {
+        let current = state.current_file.lock().unwrap();
+        current.clone()
     } else {
         None
     }
@@ -181,4 +242,102 @@ fn clear_current_file(app: AppHandle) {
         *current = None;
         log_debug("[DEBUG] clear_current_file");
     }
+}
+
+#[tauri::command]
+async fn open_file_external(path: String, editor_app: Option<String>) -> Result<(), String> {
+    use std::process::Command;
+    log_debug(&format!("[DEBUG] open_file_external: {} editor: {:?}", path, editor_app));
+
+    // First check if file exists
+    let file_exists = std::path::Path::new(&path).exists();
+    log_debug(&format!("[DEBUG] file exists: {}", file_exists));
+
+    if !file_exists {
+        return Err(format!("File does not exist: {}", path));
+    }
+
+    if let Some(app) = editor_app {
+        // Use specified app
+        let output = Command::new("open")
+            .arg("-a")
+            .arg(&app)
+            .arg(&path)
+            .output()
+            .map_err(|e| {
+                let msg = format!("[DEBUG] open -a command failed: {}", e);
+                log_debug(&msg);
+                e.to_string()
+            })?;
+
+        if !output.status.success() {
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            log_debug(&format!("[DEBUG] open -a command stderr: {}", stderr));
+        } else {
+            log_debug(&format!("[DEBUG] opened with app: {}", app));
+        }
+    } else {
+        // Show system "Open With" dialog using AppleScript
+        let script = format!(
+            r#"tell application "Finder" to open (POSIX file "{}" as alias)"#,
+            path.replace("\"", "\\\"")
+        );
+        log_debug(&format!("[DEBUG] running applescript: {}", script));
+
+        let output = Command::new("osascript")
+            .arg("-e")
+            .arg(&script)
+            .output()
+            .map_err(|e| {
+                let msg = format!("[DEBUG] osascript command failed: {}", e);
+                log_debug(&msg);
+                e.to_string()
+            })?;
+
+        if !output.status.success() {
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            log_debug(&format!("[DEBUG] osascript stderr: {}", stderr));
+        } else {
+            log_debug("[DEBUG] osascript succeeded - Open With dialog should have shown");
+        }
+    }
+
+    Ok(())
+}
+
+#[tauri::command]
+async fn choose_editor_app() -> Result<Option<String>, String> {
+    use std::process::Command;
+    log_debug("[DEBUG] choose_editor_app called");
+
+    // AppleScript to show "Choose Application" dialog
+    let script = r#"choose application with prompt "Choose an editor to open Markdown files""#;
+
+    let output = Command::new("osascript")
+        .arg("-e")
+        .arg(script)
+        .output()
+        .map_err(|e| {
+            let msg = format!("[DEBUG] osascript failed: {}", e);
+            log_debug(&msg);
+            e.to_string()
+        })?;
+
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        log_debug(&format!("[DEBUG] osascript stderr: {}", stderr));
+        return Ok(None);
+    }
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    log_debug(&format!("[DEBUG] osascript stdout: {}", stdout));
+
+    // Parse result like "Visual Studio Code" or "TextEdit"
+    let app_name = stdout.trim();
+    if app_name.is_empty() {
+        return Ok(None);
+    }
+
+    // Return the app name - user can use "open -a AppName file" to open with it
+    Ok(Some(app_name.to_string()))
 }
