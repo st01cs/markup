@@ -1,4 +1,4 @@
-use tauri::{AppHandle, Emitter, Manager};
+use tauri::{AppHandle, Manager};
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::PathBuf;
@@ -164,22 +164,13 @@ pub fn run() {
                             let path = path.replace("%20", " ");
                             log_debug(&format!("[DEBUG] file path: {}", path));
 
-                            // Check if this file is already open
-                            let is_already_open = app_handle.try_state::<AppState>()
-                                .map(|state| {
-                                    let current = state.current_file.lock().unwrap();
-                                    *current == Some(path.clone())
-                                })
-                                .unwrap_or(false);
-
-                            if is_already_open {
-                                // File is already open, emit focus event
-                                log_debug(&format!("[DEBUG] file already open, focusing window: {}", path));
-                                let _ = app_handle.emit("focus-window", &path);
+                            // D-11, D-12: Always spawn new process for new window (never focus existing)
+                            log_debug(&format!("[DEBUG] spawning new process for: {}", path));
+                            if let Ok(exe) = std::env::current_exe() {
+                                let _ = std::process::Command::new(exe).arg(&path).spawn();
+                                log_debug(&format!("[DEBUG] spawned new process for: {}", path));
                             } else {
-                                // New file, emit open event
-                                log_debug(&format!("[DEBUG] new file, opening: {}", path));
-                                let _ = app_handle.emit("open-file", &path);
+                                log_debug(&format!("[DEBUG] failed to get current exe path"));
                             }
 
                             // Also store in state as fallback (for cold start)
