@@ -17,24 +17,22 @@ progress:
 
 **Project**: Markup Reader — Floating TOC Sidebar
 **Core value**: Distraction-free Markdown reading with instant navigation — open any Markdown file and read it comfortably, with the ability to jump to any section in one click.
-**Current phase**: Phase 1: Floating TOC Sidebar
-**Current focus**: Phase 1 context gathered — ready for planning
+**Current phase**: None (between milestones)
+**Current focus**: Ready for next milestone planning
 
 ## Current Position
 
-Phase: 01
-Plan: Not started
+**Milestone v1.0: Floating TOC Sidebar — COMPLETE (shipped 2026-03-28)**
 
-- **Phase**: Phase 1: Floating TOC Sidebar
-- **Plan**: 03 (completed)
-- **Status**: Complete
+- **Phase**: 01 (complete)
+- **Plans**: 3/3 (complete)
 - **Progress**: 100%
 
 ## Performance Metrics
 
-- **Requirements completed**: 2/16 (TEST-01, TEST-02)
+- **Requirements completed**: 16/16 (all TOC-01 through TOC-14, TEST-01, TEST-02)
 - **Plans completed**: 3/3
-- **Tests passing**: Unit tests 55 passed, E2E tests running
+- **Tests passing**: 55 passed (unit + E2E)
 
 ## Accumulated Context
 
@@ -62,10 +60,9 @@ Plan: Not started
 
 ## Session Continuity
 
-- Phase 1 planning: `/gsd:plan-phase 1`
-- After phase 1 complete: `/gsd:transition 1`
-- Context file: `.planning/phases/01-floating-toc-sidebar/01-CONTEXT.md`
+- Next milestone: `/gsd:new-milestone` — start next milestone cycle
+- Archive location: `.planning/milestones/v1.0-Floating-TOC-Sidebar/`
 
 ---
 
-*Last updated: 2026-03-28*
+*Last updated: 2026-03-30*
