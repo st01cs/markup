@@ -28,9 +28,15 @@ Validated in Phase 01: Floating TOC Sidebar
 
 ### Active
 
-- [ ] **CLI-01**: `markup <file.md>` CLI command opens file in new app window
-- [ ] **CLI-02**: Each CLI invocation opens a new window (even if app already running)
-- [ ] **CLI-03**: CLI handles non-existent files gracefully with error message
+None
+
+### Validated (Phase 02)
+
+- [x] **CLI-01**: `markup <file.md>` CLI command opens file in new app window
+- [x] **CLI-02**: Each CLI invocation opens a new window (even if app already running)
+- [x] **CLI-03**: CLI handles non-existent files gracefully with error message
+
+Validated in Phase 02: CLI Command
 
 ### Out of Scope
 
@@ -75,8 +81,8 @@ Validated in Phase 01: Floating TOC Sidebar
 
 ## Current State
 
-**Milestone:** v1.2 CLI — In progress
-**Phase:** None (between milestones)
+**Milestone:** v1.2 CLI — Complete
+**Phase:** Phase 02 complete
 **Core value:** Distraction-free Markdown reading with instant navigation
 
 ## Current Milestone: v1.2 CLI
@@ -106,4 +112,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-30 after v1.0 milestone, starting v1.2 CLI*
+*Last updated: 2026-03-30 after v1.2 CLI milestone complete*
