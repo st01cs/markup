@@ -1,42 +1,43 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: v1.0 milestone complete
-last_updated: "2026-03-28T10:37:12.097Z"
+milestone: v1.2
+milestone_name: CLI
+status: v1.2 milestone started
+last_updated: "2026-03-30"
 progress:
-  total_phases: 1
-  completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
-# State — Floating TOC Sidebar
+# State — Markup Reader v1.2 CLI
 
 ## Project Reference
 
-**Project**: Markup Reader — Floating TOC Sidebar
+**Project**: Markup Reader — CLI
 **Core value**: Distraction-free Markdown reading with instant navigation — open any Markdown file and read it comfortably, with the ability to jump to any section in one click.
-**Current phase**: None (between milestones)
-**Current focus**: Ready for next milestone planning
+**Current phase**: None (defining requirements)
+**Current focus**: Planning v1.2 CLI requirements
 
 ## Current Position
 
-**Milestone v1.0: Floating TOC Sidebar — COMPLETE (shipped 2026-03-28)**
+**Milestone v1.2: CLI — In Progress**
 
-- **Phase**: 01 (complete)
-- **Plans**: 3/3 (complete)
-- **Progress**: 100%
+- **Phase**: Not started (defining requirements)
+- **Plan**: —
+- **Status**: Defining requirements
+- **Progress**: 0%
 
 ## Performance Metrics
 
-- **Requirements completed**: 16/16 (all TOC-01 through TOC-14, TEST-01, TEST-02)
-- **Plans completed**: 3/3
-- **Tests passing**: 55 passed (unit + E2E)
+- **Requirements completed**: 0/0 (v1.2 not started)
+- **Plans completed**: 0/0
+- **Tests passing**: 55 passed (v1.0 TOC milestone)
 
 ## Accumulated Context
 
-### Key Decisions
+### Key Decisions (from v1.0)
 
 - Use `marked` heading renderer hook for ID injection
 - H1-H3 only (H4+ rare, would clutter panel)
@@ -47,21 +48,20 @@ progress:
 ### Technical Notes
 
 - Stack: TypeScript, Vite, marked v17, highlight.js, DOMPurify, Vitest, Playwright
+- Backend: Rust, Tauri 2
 - Existing patterns: FAB widget (bottom-right, z-index: 100), error overlay (Escape to close)
-- Heading IDs preserved through DOMPurify (confirmed `id` in ALLOWED_ATTR)
+- Tauri 2 supports CLI arguments via `tauri::async_runtime` and command-line parsing
 
 ### Edge Cases to Handle
 
-- Duplicate heading IDs (collision detection with numeric suffix)
-- Special characters in headings (robust slugify with Unicode normalization)
-- Scroll offset (panel height should not obscure target heading)
-- Keyboard trap prevention (focus trap + Escape at document level)
-- Mobile dismiss (<600px needs close button and tap-outside handler)
+- Non-existent files (CLI should error gracefully)
+- Multiple rapid invocations (each opens new window)
+- Path normalization on macOS
 
 ## Session Continuity
 
-- Next milestone: `/gsd:new-milestone` — start next milestone cycle
-- Archive location: `.planning/milestones/v1.0-Floating-TOC-Sidebar/`
+- Next: `/gsd:new-milestone` — in progress
+- Previous milestone: v1.0 Floating TOC Sidebar (shipped 2026-03-28)
 
 ---
 

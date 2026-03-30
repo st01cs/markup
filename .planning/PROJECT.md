@@ -2,7 +2,7 @@
 
 ## What This Is
 
-Markup Reader is an elegant desktop Markdown reader built with Tauri, TypeScript, and Rust. It renders GitHub-Flavored Markdown with syntax highlighting, dark/light mode support, and minimal UI footprint. This milestone adds a floating table of contents (TOC) sidebar for quick navigation within long documents.
+Markup Reader is an elegant desktop Markdown reader built with Tauri, TypeScript, and Rust. It renders GitHub-Flavored Markdown with syntax highlighting, dark/light mode support, and minimal UI footprint. This milestone adds a command-line interface to open files directly from the terminal.
 
 ## Core Value
 
@@ -28,7 +28,9 @@ Validated in Phase 01: Floating TOC Sidebar
 
 ### Active
 
-(None)
+- [ ] **CLI-01**: `markup <file.md>` CLI command opens file in new app window
+- [ ] **CLI-02**: Each CLI invocation opens a new window (even if app already running)
+- [ ] **CLI-03**: CLI handles non-existent files gracefully with error message
 
 ### Out of Scope
 
@@ -73,9 +75,18 @@ Validated in Phase 01: Floating TOC Sidebar
 
 ## Current State
 
-**Milestone:** v1.0 Floating TOC Sidebar — SHIPPED 2026-03-28
+**Milestone:** v1.2 CLI — In progress
 **Phase:** None (between milestones)
 **Core value:** Distraction-free Markdown reading with instant navigation
+
+## Current Milestone: v1.2 CLI
+
+**Goal:** Add command-line interface to open markdown files directly from terminal
+
+**Target features:**
+- `markup <file.md>` — Opens the file in a new app window
+- Each CLI invocation opens a new window (even if app already running)
+- CLI handles non-existent files gracefully with error message
 
 ## Evolution
 
@@ -95,4 +106,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-28 after v1.0 milestone*
+*Last updated: 2026-03-30 after v1.0 milestone, starting v1.2 CLI*
