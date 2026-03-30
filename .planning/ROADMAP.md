@@ -24,7 +24,7 @@
 **Plans**: 1 plan
 
 Plans:
-- [ ] 02-01-PLAN.md — CLI argument parsing, file validation, and window creation
+- [x] 02-01-PLAN.md — CLI argument parsing, file validation, and window creation
 
 **UI hint**: no
 
@@ -33,7 +33,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Floating TOC Sidebar | 3/3 | Complete | 2026-03-28 |
-| 2. CLI Command | 0/1 | Not started | - |
+| 2. CLI Command | 0/1 | Planned | - |
 
 ---
 *Generated: 2026-03-30*
