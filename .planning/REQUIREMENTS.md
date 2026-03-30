@@ -4,9 +4,9 @@
 
 ### CLI: Command-Line Interface
 
-- [ ] **CLI-01**: `markup <file.md>` CLI command opens the specified markdown file in a new app window
-- [ ] **CLI-02**: Each CLI invocation opens a new window (even if app already running)
-- [ ] **CLI-03**: CLI handles non-existent files gracefully with a user-friendly error message
+- [x] **CLI-01**: `markup <file.md>` CLI command opens the specified markdown file in a new app window
+- [x] **CLI-02**: Each CLI invocation opens a new window (even if app already running)
+- [x] **CLI-03**: CLI handles non-existent files gracefully with a user-friendly error message
 
 ## v2 Requirements (Deferred)
 
@@ -24,9 +24,9 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CLI-01 | - | Pending |
-| CLI-02 | - | Pending |
-| CLI-03 | - | Pending |
+| CLI-01 | - | Complete |
+| CLI-02 | - | Complete |
+| CLI-03 | - | Complete |
 
 ---
 *Generated: 2026-03-30*

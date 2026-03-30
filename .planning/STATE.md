@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: CLI
-status: v1.2 milestone started
-last_updated: "2026-03-30"
+status: Phase complete — ready for verification
+last_updated: "2026-03-30T11:28:10.004Z"
 progress:
-  total_phases: 0
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_phases: 2
+  completed_phases: 2
+  total_plans: 4
+  completed_plans: 4
 ---
 
 # State — Markup Reader v1.2 CLI
@@ -22,6 +22,8 @@ progress:
 
 ## Current Position
 
+Phase: 02 (cli-command) — EXECUTING
+Plan: 1 of 1
 **Milestone v1.2: CLI — In Progress**
 
 - **Phase**: Not started (defining requirements)
