@@ -1,5 +1,5 @@
 [package]
-name = "markup-reader"
+name = "markup"
 version = "0.1.2"
 description = "A Tauri App"
 authors = ["you"]
