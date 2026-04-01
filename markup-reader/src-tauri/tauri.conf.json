@@ -71,19 +71,6 @@
       "desktop": {
         "schemes": ["file"]
       }
-    },
-    "fs": {
-      "scope": {
-        "allow": [
-          { "path": "$HOME/**" },
-          { "path": "$APPDATA/**" },
-          { "path": "$CONFIG/**" },
-          { "path": "$DOCUMENT/**" },
-          { "path": "$DESKTOP/**" },
-          { "path": "$DOWNLOAD/**" },
-          { "path": "**" }
-        ]
-      }
     }
   }
 }
