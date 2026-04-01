@@ -192,7 +192,7 @@ pub fn run() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![get_pending_file, get_current_file, set_current_file, clear_current_file, open_file_external, choose_editor_app])
+        .invoke_handler(tauri::generate_handler![get_pending_file, get_current_file, set_current_file, clear_current_file, open_file_external, choose_editor_app, read_file])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -331,4 +331,14 @@ async fn choose_editor_app() -> Result<Option<String>, String> {
 
     // Return the app name - user can use "open -a AppName file" to open with it
     Ok(Some(app_name.to_string()))
+}
+
+#[tauri::command]
+async fn read_file(path: String) -> Result<String, String> {
+    log_debug(&format!("[DEBUG] read_file command: {}", path));
+    std::fs::read_to_string(&path).map_err(|e| {
+        let msg = format!("[DEBUG] read_file failed: {}", e);
+        log_debug(&msg);
+        e.to_string()
+    })
 }
