@@ -10,18 +10,7 @@
     "dialog:default",
     "deep-link:default",
     "core:window:allow-set-title",
-    {
-      "identifier": "fs:allow-read-text-file",
-      "allow": [
-        { "path": "$HOME/**" },
-        { "path": "$APPDATA/**" },
-        { "path": "$CONFIG/**" },
-        { "path": "$DOCUMENT/**" },
-        { "path": "$DESKTOP/**" },
-        { "path": "$DOWNLOAD/**" },
-        { "path": "**" }
-      ]
-    },
+    "fs:default",
     {
       "identifier": "fs:scope",
       "allow": [
