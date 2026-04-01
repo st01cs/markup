@@ -146,6 +146,7 @@ kbd {
   max-width: 800px;
   margin: 0 auto;
   font-size: 16px;
+  white-space: pre-wrap;
 }
 
 .markdown-body h1,
