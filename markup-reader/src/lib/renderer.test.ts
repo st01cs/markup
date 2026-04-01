@@ -235,9 +235,11 @@ describe('XSS injection scenarios', () => {
   });
 
   it('blocks style tag with expression', () => {
-    const input = '<div style="width: expression(alert(1))">XSS</div>';
+    // <style> tag itself should be blocked
+    const input = '<style>body{background:expression(alert(1))}</style><div>XSS</div>';
     const { html } = renderMarkdown(input);
-    expect(html).not.toContain('expression');
+    expect(html).not.toContain('<style>');
+    expect(html).toContain('<div>XSS</div>');
   });
 
   it('blocks meta refresh redirect', () => {

@@ -79,22 +79,50 @@ export function slugify(text: string, existingIds: string[] = []): string {
   return uniqueId;
 }
 
-const ALLOWED_TAGS = [
-  'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-  'p', 'br', 'hr',
-  'ul', 'ol', 'li',
-  'blockquote', 'pre', 'code',
-  'a', 'img',
-  'table', 'thead', 'tbody', 'tr', 'th', 'td',
-  'details', 'summary', 'span', 'div',
-  'strong', 'em', 'del', 'ins',
-  'sup', 'sub',
+// Blocklist of dangerous tags that should never be allowed
+const FORBID_TAGS = [
+  'script',    // JavaScript execution
+  'iframe',    // Embedded content / clickjacking
+  'form',      // Phishing / form hijacking
+  'style',     // CSS-based data exfiltration / keylogging
+  'object',    // Plugin-based attacks
+  'embed',     // Plugin-based attacks
+  'applet',    // Java applet attacks
+  'link',      // CSS / tracking
+  'noscript',  // Inconsistent behavior
+  'noframes',  // Frame-based attacks
+  'plaintext', // Legacy behavior
 ];
 
-const ALLOWED_ATTR = [
-  'href', 'src', 'alt', 'title', 'class', 'id',
-  'target', 'rel', 'width', 'height',
-  'open', 'collapsed',
+// Blocklist of dangerous attributes
+const FORBID_ATTR = [
+  // Event handlers (on* attributes)
+  'onabort', 'onanimationcancel', 'onanimationend', 'onanimationiteration',
+  'onanimationstart', 'onauxclick', 'onbeforeinput', 'onbeforematch',
+  'onbeforepaste', 'onbeforeprint', 'onbeforeunload', 'onblur', 'oncanplay',
+  'oncanplaythrough', 'onchange', 'onclick', 'onclose', 'oncontextlost',
+  'oncontextmenu', 'oncontextrestored', 'oncopy', 'oncuechange', 'oncut',
+  'ondblclick', 'ondrag', 'ondragend', 'ondragenter', 'ondragleave',
+  'ondragover', 'ondragstart', 'ondrop', 'ondurationchange', 'onemptied',
+  'onended', 'onerror', 'onfocus', 'onformdata', 'oninput', 'oninvalid',
+  'onkeydown', 'onkeypress', 'onkeyup', 'onload', 'onloadeddata',
+  'onloadedmetadata', 'onloadstart', 'onmousedown', 'onmouseenter',
+  'onmouseleave', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup',
+  'onpaste', 'onpause', 'onplay', 'onplaying', 'onprogress', 'onratechange',
+  'onreset', 'onresize', 'onscroll', 'onscrollend', 'onsecuritypolicyviolation',
+  'onseeked', 'onseeking', 'onselect', 'onslotchange', 'onstalled',
+  'onsubmit', 'onsuspend', 'ontimeupdate', 'ontoggle', 'ontransitioncancel',
+  'ontransitionend', 'ontransitionrun', 'ontransitionstart', 'onunload',
+  'onvolumechange', 'onwaiting', 'onwheel',
+];
+
+// Allowlist of safe attributes (extends DOMPurify defaults)
+const ADD_ATTR = [
+  'class', 'id', 'title', 'lang', 'dir',
+  'accesskey', 'autocapitalize', 'inert', 'popover',
+  'shadowroot', 'shadowrootmode',
+  'Part', 'exportparts',
+  'for', 'rel',
 ];
 
 export interface RenderResult {
@@ -120,9 +148,10 @@ export function renderMarkdown(raw: string): RenderResult {
   }
 
   const clean = DOMPurify.sanitize(html, {
-    ALLOWED_TAGS,
-    ALLOWED_ATTR,
+    FORBID_TAGS,
+    FORBID_ATTR,
     ALLOW_DATA_ATTR: false,
+    ADD_ATTR,
   });
 
   return { html: clean, errors, headings }; // Return headings array (TOC-01)
